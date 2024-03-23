@@ -63,7 +63,7 @@ jobs:
 
       # macOS 빌드 결과물 업로드
       - name: Upload macOS DMG (if exists)
-        if: matrix.os == 'macos-latest' && success()
+        if: matrix.os == 'macos-latest'
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.LIGHTGRAM_SECRET }}
@@ -75,7 +75,7 @@ jobs:
 
       # Windows 빌드 결과물 업로드
       - name: Upload Windows Installer (if exists)
-        if: matrix.os == 'windows-latest' && success()
+        if: matrix.os == 'windows-latest'
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.LIGHTGRAM_SECRET }}
