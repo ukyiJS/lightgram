@@ -61,26 +61,30 @@ jobs:
           draft: false
           prerelease: false
 
+      - name: Get upload URL
+        id: get_upload_url
+        run: echo "::set-output name=upload_url::$(echo ${{ steps.create_release.outputs.upload_url }} | jq -r '.upload_url')"
+
       # macOS 빌드 결과물 업로드
       - name: Upload macOS DMG (if exists)
-        if: matrix.os == 'macos-latest'
+        if: matrix.os == 'macos-latest' && success()
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.LIGHTGRAM_SECRET }}
         with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          upload_url: ${{ steps.get_upload_url.outputs.upload_url }}
           asset_path: ./src-tauri/target/release/bundle/dmg/lightgram_0.0.0_x64.dmg
           asset_name: lightgram_0.0.0_x64.dmg
           asset_content_type: application/x-apple-diskimage
 
       # Windows 빌드 결과물 업로드
       - name: Upload Windows Installer (if exists)
-        if: matrix.os == 'windows-latest'
+        if: matrix.os == 'windows-latest' && success()
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.LIGHTGRAM_SECRET }}
         with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          upload_url: ${{ steps.get_upload_url.outputs.upload_url }}
           asset_path: ./src-tauri/target/release/bundle/msi/lightgram_0.0.0_x64.msi
           asset_name: lightgram_0.0.0_x64.msi
           asset_content_type: application/octet-stream
