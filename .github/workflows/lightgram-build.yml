@@ -9,7 +9,7 @@ on:
       - main
 
 jobs:
-  build-and-release:
+  build:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -41,6 +41,10 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pnpm-
 
+  create-release:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
