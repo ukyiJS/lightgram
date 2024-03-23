@@ -57,7 +57,7 @@ jobs:
         if: matrix.os == 'macos-latest' && success()
         uses: actions/upload-release-asset@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.LIGHTGRAM }}
+          GITHUB_TOKEN: ${{ secrets.LIGHTGRAM_SECRET }}
         with:
           upload_url: ${{ github.event.release.upload_url }}
           asset_path: ./src-tauri/target/release/bundle/dmg/lightgram_0.0.0_x64.dmg
@@ -69,7 +69,7 @@ jobs:
         if: matrix.os == 'windows-latest' && success()
         uses: actions/upload-release-asset@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.LIGHTGRAM }}
+          GITHUB_TOKEN: ${{ secrets.LIGHTGRAM_SECRET }}
         with:
           upload_url: ${{ github.event.release.upload_url }}
           asset_path: ./src-tauri/target/release/bundle/msi/lightgram_0.0.0_x64.msi
