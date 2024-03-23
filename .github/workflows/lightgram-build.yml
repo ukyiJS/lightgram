@@ -9,8 +9,7 @@ on:
       - main
 
 jobs:
-  build:
-    name: Build on ${{ matrix.os }}
+  build-and-release:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -53,12 +52,26 @@ jobs:
           draft: false
           prerelease: false
 
-      - name: Upload Release Asset
-        uses: actions/upload-release-asset@v1
+      # macOS 빌드 결과물 업로드
+      - name: Upload macOS DMG (if exists)
+        if: matrix.os == 'macos-latest' && success()
+        uses: actions/upload-release-asset@v2
         env:
-          GITHUB_TOKEN: ${{ secrets.LIGHTGRAM_SECRET }}
+          GITHUB_TOKEN: ${{ secrets.LIGHTGRAM }}
         with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./artifact.zip
-          asset_name: artifact.zip
-          asset_content_type: application/zip
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: ./src-tauri/target/release/bundle/dmg/lightgram_0.0.0_x64.dmg
+          asset_name: lightgram_0.0.0_x64.dmg
+          asset_content_type: application/x-apple-diskimage
+
+      # Windows 빌드 결과물 업로드
+      - name: Upload Windows Installer (if exists)
+        if: matrix.os == 'windows-latest' && success()
+        uses: actions/upload-release-asset@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.LIGHTGRAM }}
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: ./src-tauri/target/release/bundle/msi/lightgram_0.0.0_x64.msi
+          asset_name: lightgram_0.0.0_x64.msi
+          asset_content_type: application/octet-stream
