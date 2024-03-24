@@ -1,6 +1,6 @@
 # Lightgram
 
-### 사진 유틸리티
+### 사진 유틸리티 프로그램
 
 - [x] raw, jpg 파일 분리
     - 선택한 디렉토리 기준으로 확장자별로 디렉토리 생성 후 이동
@@ -20,3 +20,11 @@
     - 셔터스피드 별 사진 분류
     - ISO 별 사진 분류
     - 초점 거리 별 사진 분류
+
+### 사용 기술
+
+- [Tauri](https://tauri.app/)
+- [Rust](https://www.rust-lang.org/)
+- [React](https://react.dev/)
+- [TypeScript](https://www.typescriptlang.org/)
+- [Vite](https://vitejs.dev/)
