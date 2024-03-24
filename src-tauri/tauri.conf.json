@@ -9,15 +9,21 @@
     "productName": "lightgram",
     "version": "0.0.6"
   },
-  "tauri": { 
+  "tauri": {
     "allowlist": {
       "all": false,
       "dialog": {
-        "all": true 
+        "all": true
       },
       "shell": {
         "all": false,
         "open": true
+      },
+      "fs": {
+        "all": true
+      },
+      "path": {
+        "all": true
       }
     },
     "windows": [
