@@ -3,39 +3,29 @@ import { open } from '@tauri-apps/api/dialog';
 import './App.css';
 import { useState } from 'react';
 
-async function separateFilesByExtension(directoryPath: string): Promise<string> {
-  try {
-    return await invoke<string>('separate_files_by_extension', { dirPath: directoryPath });
-  } catch (error) {
-    console.error('Error separating file_features:', error);
-    return error as string;
-  }
-}
-
 function App() {
-  const [message, setMessage] = useState<string>('');
+  const [separateMessage, setSeparateMessage] = useState<string>('');
   const handleSeparateFileClick = async () => {
-    const path = await open({
+    const dirPath = await open({
       directory: true,
       multiple: false,
       title: '디렉토리 선택',
     });
-    if (!path) return;
+    if (!dirPath) return;
 
-    const resultMessage = await separateFilesByExtension(path as string);
-    setMessage(resultMessage);
+    const duration = await invoke<string>('separate_files_by_extension', { dirPath });
+    setSeparateMessage(`분리가 완료되었습니다. (${duration}초)`);
   };
 
   const handleUndoClick = async () => {
-    const resultMessage = await invoke<string>('undo_files');
-    console.log('### resultMessage', resultMessage);
+    await invoke<string>('undo_files');
   };
 
   return (
     <main>
       <button onClick={handleSeparateFileClick}>raw, jpg 분리</button>
       <button onClick={handleUndoClick}>실행취소</button>
-      {message}
+      {separateMessage}
     </main>
   );
 }
