@@ -9,11 +9,11 @@
     "productName": "lightgram",
     "version": "0.0.6"
   },
-  "tauri": {
+  "tauri": { 
     "allowlist": {
       "all": false,
       "dialog": {
-        "all": true
+        "all": true 
       },
       "shell": {
         "all": false,
