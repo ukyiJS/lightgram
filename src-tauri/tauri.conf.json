@@ -6,7 +6,8 @@
     "distDir": "../dist"
   },
   "package": {
-    "productName": "lightgram"
+    "productName": "lightgram",
+    "version": "0.0.1"
   },
   "tauri": {
     "allowlist": {
