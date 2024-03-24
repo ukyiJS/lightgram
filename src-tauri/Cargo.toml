@@ -1,4 +1,5 @@
 [package]
+name = "lightgram"
 description = "lightgram app"
 authors = ["ukyi"]
 edition = "2021"
