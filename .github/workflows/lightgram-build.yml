@@ -1,4 +1,4 @@
-name: Release
+name: lightgram Release
 on:
   push:
     tags:
@@ -62,7 +62,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.LIGHTGRAM_SECRET }}
         with:
           tagName: ${{ github.ref_name }}
-          releaseName: 'Lightgram v__VERSION__'
+          releaseName: 'lightgram v__VERSION__'
           releaseBody: 'See the assets to download and install this version.'
           releaseDraft: true
           prerelease: false
