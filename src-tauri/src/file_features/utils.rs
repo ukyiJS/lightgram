@@ -47,18 +47,18 @@ pub async fn move_files(
                     TaskControl::acquire(control_clone_inner.clone()).await;
                     if !is_dir(&ext_dir_clone).await {
                         if let Err(e) = async_fs::create_dir_all(&ext_dir_clone).await {
-                            eprintln!("Failed to create directory: {}", e);
+                            eprintln!("디렉토리를 생성하는데 실패했습니다.: {}", e);
                             return;
                         }
                     }
                     let new_path = ext_dir_clone.join(path.file_name().unwrap());
                     if let Err(e) = async_fs::rename(&path, &new_path).await {
-                        eprintln!("Failed to move file: {}", e);
+                        eprintln!("파일을 이동하는데 실패했습니다.: {}", e);
                     } else {
                         let mut logs = MOVE_LOGS.lock().await;
                         logs.push_back(MoveLog {
                             original_path: path.clone(),
-                            new_path: new_path,
+                            new_path,
                         });
                     }
                     TaskControl::release(control_clone_inner);
