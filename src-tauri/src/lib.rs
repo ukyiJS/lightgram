@@ -1,5 +1,4 @@
 pub mod features;
-pub mod shared;
 
 use features::categorize_by_metadata::command::{
     group_photos_by_aperture, group_photos_by_camera_make, group_photos_by_camera_model,
