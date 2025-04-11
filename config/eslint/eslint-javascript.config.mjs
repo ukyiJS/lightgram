@@ -2,12 +2,9 @@ import js from '@eslint/js';
 // @ts-expect-error - 타입 선언 파일 없음
 import importPlugin from 'eslint-plugin-import';
 
-import { objectNewline } from './eslint-object-newline.plugin.mjs';
-
 export const eslintJavascriptConfig = [
   js.configs.recommended,
   importPlugin.flatConfigs.recommended,
-  objectNewline.configs.recommended,
   {
     files: ['**/*.{js,cjs,mjs,jsx,ts,cts,mts,tsx}'],
     settings: {

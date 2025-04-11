@@ -85,10 +85,8 @@ export const eslintFormatConfig = [
 
       /* 객체 속성 줄바꿈 스타일 설정 */
       '@stylistic/object-property-newline': ['error', {
-        allowAllPropertiesOnSameLine: true,
+        allowAllPropertiesOnSameLine: false,
       }],
-
-      /* 변수 선언은 항상 한 줄에 하나씩 */
       '@stylistic/one-var-declaration-per-line': ['error', 'always'],
 
       /* 문장 간 공백 줄 설정 (가독성 확보 목적) */
@@ -183,6 +181,31 @@ export const eslintFormatConfig = [
           prev: 'expression',
           next: 'expression',
         },
+        {
+          blankLine: 'any',
+          prev: 'case',
+          next: 'case',
+        },
+        {
+          blankLine: 'any',
+          prev: 'case',
+          next: 'default',
+        },
+        {
+          blankLine: 'any',
+          prev: 'case',
+          next: 'break',
+        },
+        {
+          blankLine: 'any',
+          prev: 'default',
+          next: 'break',
+        },
+        {
+          blankLine: 'any',
+          prev: 'expression',
+          next: 'break',
+        },
       ],
 
       /* 객체 속성의 따옴표는 필요한 경우만 사용 */
@@ -199,7 +222,8 @@ export const eslintFormatConfig = [
         objects: 'always-multiline',
         imports: 'always-multiline',
         exports: 'always-multiline',
-        functions: 'never',
+        functions: 'always-multiline',
+        enums: 'always-multiline',
       }],
 
       /* 객체에서 key: value 사이 공백 스타일 설정 */
