@@ -1,13 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 
-import IndexPage from '../pages/index/ui/index-page';
+import IndexPage from '@/pages/index/ui/index-page';
+import '@/styles/globals.css';
 
-const rootElement = document.getElementById('root');
-
-if (!rootElement) throw new Error('Failed to find the root element');
-
-ReactDOM.createRoot(rootElement).render(
+ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
     <IndexPage />
   </React.StrictMode>,

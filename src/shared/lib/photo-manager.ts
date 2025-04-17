@@ -1,119 +1,66 @@
 import { invoke } from '@tauri-apps/api/core';
 
+export interface FileInfo {
+  name: string;
+  path: string;
+  is_file: boolean;
+  extension: string | null;
+  size: number;
+}
+
 /**
  * PhotoManager - 백엔드 Rust 함수를 호출하는 클래스
  * 다양한 사진 관리 및 정리 기능을 제공합니다.
  */
 export class PhotoManager {
   /**
-   * 파일을 확장자별로 정리합니다.
+   * 디렉토리 내 모든 파일 목록을 가져옵니다.
+   * @param directory 디렉토리 경로
+   */
+  listDirectoryFiles = async (directory: string): Promise<FileInfo[]> =>
+    invoke('list_directory_files', { params: { directory } });
+
+  /**
+   * 디렉토리 내 일반 이미지(JPG 포함)와 RAW 파일 목록을 분리하여 가져옵니다.
+   * @param directory 디렉토리 경로
+   */
+  listNormalAndRawFiles = async (directory: string): Promise<[FileInfo[], FileInfo[]]> =>
+    invoke('list_normal_and_raw_files', { params: { directory } });
+
+  /**
+   * 파일을 타입별로 정리합니다.
+   * 일반 파일은 확장자별 디렉토리로, RAW 파일과 XMP 파일은 'raw' 디렉토리로 이동합니다.
    * @param directory 정리할 디렉토리 경로
    */
-  organizeByExtension = async (directory: string) => invoke('organize_files_by_extension', {
-    params: { directory },
-  });
+  organizeFilesByType = async (directory: string) =>
+    invoke('organize_files_by_type', { params: { directory } });
 
   /**
-   * RAW 이미지 파일을 JPG로 변환합니다.
-   * @param inputDir 입력 디렉토리 경로
-   * @param outputDir 출력 디렉토리 경로 (선택사항)
-   */
-  convertRawToJpg = async (inputDir: string, outputDir?: string) => invoke('convert_raw_files_to_jpg', {
-    params: {
-      inputDir,
-      outputDir,
-    },
-  });
-
-  /**
-   * JPG 파일과 일치하는 RAW 파일을 찾습니다.
-   * @param jpgDir JPG 파일이 있는 디렉토리 경로
-   * @param rawDir RAW 파일이 있는 디렉토리 경로
-   */
-  getMatchedRawFiles = async (jpgDir: string, rawDir: string) => invoke('get_matched_raw_files', {
-    params: {
-      jpgDir,
-      rawDir,
-    },
-  });
-
-  /**
-   * 사진을 렌즈 종류별로 그룹화합니다.
+   * 사진을 메타데이터 타입별로 그룹화합니다.
    * @param directory 대상 디렉토리 경로
+   * @param metadataType 그룹화 기준이 될 메타데이터 타입
    */
-  groupPhotosByLens = async (directory: string) => invoke('group_photos_by_lens', {
-    params: { directory },
-  });
+  groupByMetadata = async (directory: string, metadataType: MetadataType) => {
+    const commandMap: Record<MetadataType, string> = {
+      lens: 'group_by_lens',
+      date: 'group_by_date',
+      iso: 'group_by_iso',
+      aperture: 'group_by_aperture',
+      shutterSpeed: 'group_by_shutter_speed',
+      focalLength: 'group_by_focal_length',
+      cameraModel: 'group_by_camera_model',
+      timeOfDay: 'group_by_time_of_day',
+      gpsLocation: 'group_by_gps_location',
+    };
 
-  /**
-   * 사진을 촬영 날짜별로 그룹화합니다.
-   * @param directory 대상 디렉토리 경로
-   */
-  groupPhotosByDate = async (directory: string) => invoke('group_photos_by_date', {
-    params: { directory },
-  });
+    const command = commandMap[metadataType];
 
-  /**
-   * 사진을 ISO 값별로 그룹화합니다.
-   * @param directory 대상 디렉토리 경로
-   */
-  groupPhotosByIso = async (directory: string) => invoke('group_photos_by_iso', {
-    params: { directory },
-  });
-
-  /**
-   * 사진을 조리개 값별로 그룹화합니다.
-   * @param directory 대상 디렉토리 경로
-   */
-  groupPhotosByAperture = async (directory: string) => invoke('group_photos_by_aperture', {
-    params: { directory },
-  });
-
-  /**
-   * 사진을 셔터 스피드별로 그룹화합니다.
-   * @param directory 대상 디렉토리 경로
-   */
-  groupPhotosByShutterSpeed = async (directory: string) => invoke('group_photos_by_shutter_speed', {
-    params: { directory },
-  });
-
-  /**
-   * 사진을, 초점 거리별로 그룹화합니다.
-   * @param directory 대상 디렉토리 경로
-   */
-  groupPhotosByFocalLength = async (directory: string) => invoke('group_photos_by_focal_length', {
-    params: { directory },
-  });
-
-  /**
-   * 사진을 카메라 모델별로 그룹화합니다.
-   * @param directory 대상 디렉토리 경로
-   */
-  groupPhotosByCameraModel = async (directory: string) => invoke('group_photos_by_camera_model', {
-    params: { directory },
-  });
-
-  /**
-   * 사진을 카메라 제조사별로 그룹화합니다.
-   * @param directory 대상 디렉토리 경로
-   */
-  groupPhotosByCameraMake = async (directory: string) => invoke('group_photos_by_camera_make', {
-    params: { directory },
-  });
-
-  /**
-   * 사진을 촬영 시간대별로 그룹화합니다.
-   * @param directory 대상 디렉토리 경로
-   */
-  groupPhotosByTimeOfDay = async (directory: string) => invoke('group_photos_by_time_of_day', {
-    params: { directory },
-  });
-
-  /**
-   * 사진을 GPS 위치 정보별로 그룹화합니다.
-   * @param directory 대상 디렉토리 경로
-   */
-  groupPhotosByGpsLocation = async (directory: string) => invoke('group_photos_by_gps_location', {
-    params: { directory },
-  });
+    return invoke<void>(command, { directory });
+  };
 }
+
+/**
+ * 그룹화에 사용될 메타데이터 타입
+ */
+export type MetadataType =
+  'aperture' | 'cameraModel' | 'date' | 'focalLength' | 'gpsLocation' | 'iso' | 'lens' | 'shutterSpeed' | 'timeOfDay';
