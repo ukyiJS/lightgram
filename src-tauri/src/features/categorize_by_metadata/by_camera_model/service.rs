@@ -1,9 +1,12 @@
+use crate::shared::file_extensions::is_supported_image;
 use exif::{In, Reader, Tag};
 use std::collections::HashMap;
-use std::fs::File;
+use std::fs::{self, File};
 use std::path::Path;
 
-pub fn group_by_camera_model(directory: &str) -> Result<HashMap<String, Vec<String>>, String> {
+pub fn handle_group_by_camera_model(
+    directory: &str,
+) -> Result<HashMap<String, Vec<String>>, String> {
     let mut map: HashMap<String, Vec<String>> = HashMap::new();
     let dir_path = Path::new(directory);
 
@@ -19,14 +22,15 @@ pub fn group_by_camera_model(directory: &str) -> Result<HashMap<String, Vec<Stri
             continue;
         }
 
-        let ext = file_path
+        // 이미지 파일만 처리
+        let is_image_file = file_path
             .extension()
             .and_then(|e| e.to_str())
-            .map(|s| s.to_lowercase());
-        if let Some(ext) = ext {
-            if ext != "jpg" && ext != "jpeg" {
-                continue;
-            }
+            .map(|ext| is_supported_image(ext))
+            .unwrap_or(false);
+
+        if !is_image_file {
+            continue;
         }
 
         let file = File::open(&file_path).map_err(|e| e.to_string())?;
@@ -42,6 +46,24 @@ pub fn group_by_camera_model(directory: &str) -> Result<HashMap<String, Vec<Stri
         map.entry(model)
             .or_default()
             .push(file_path.to_string_lossy().to_string());
+    }
+
+    // 파일을 각 카메라 모델 디렉토리로 이동
+    for (model, file_paths) in &map {
+        let safe_model = model.replace("/", "-").replace("\\", "-").replace(":", "_");
+        let model_dir = dir_path.join(safe_model);
+
+        if !model_dir.exists() {
+            fs::create_dir(&model_dir).map_err(|e| e.to_string())?;
+        }
+
+        for file_path_str in file_paths {
+            let file_path = Path::new(file_path_str);
+            if let Some(file_name) = file_path.file_name() {
+                let target_path = model_dir.join(file_name);
+                fs::rename(file_path, &target_path).map_err(|e| e.to_string())?;
+            }
+        }
     }
 
     Ok(map)
